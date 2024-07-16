@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import { tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import toast from 'svelte-french-toast';
 	import type { PageData, ActionData } from './$types';
 	import type { Message } from './+page';
@@ -13,6 +13,7 @@
 	let userInput = '';
 	let sending = false;
 	let chatContainer: HTMLDivElement;
+	let inputElement: HTMLInputElement;
 
 	$: console.log('xx', form);
 
@@ -33,6 +34,16 @@
 		await tick();
 		chatContainer.scrollTop = chatContainer.scrollHeight;
 	}
+
+	async function focusInput() {
+		await tick();
+		inputElement.focus();
+	}
+    
+	onMount(() => {
+		focusInput(); // TODO: For some reason not working
+		scrollToBottom();
+	});
 </script>
 
 <h1>Chat with Claude</h1>
@@ -50,14 +61,15 @@
 	use:enhance={() => {
 		sending = true;
 		return ({ update, result }) => {
-			update({ invalidateAll: true }).finally(() => {
+			update({ invalidateAll: true }).finally(async () => {
 				sending = false;
 				if (result.type === 'failure') {
 					toast.error(result.data?.error || 'An error occurred');
 				} else {
 					userInput = '';
-					scrollToBottom();
+					await scrollToBottom();
 				}
+				focusInput();
 			});
 		};
 	}}
@@ -67,6 +79,7 @@
 		type="text"
 		name="message"
 		bind:value={userInput}
+		bind:this={inputElement}
 		placeholder="Type your message..."
 		required
 		disabled={sending}
