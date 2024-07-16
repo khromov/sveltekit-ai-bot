@@ -1,12 +1,13 @@
-import { ANTHROPIC_API_KEY } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import Anthropic from '@anthropic-ai/sdk';
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import type { TextBlock } from '@anthropic-ai/sdk/resources/messages.mjs';
 import { getSystemPrompt } from '$lib/systemPrompt';
+import { building } from '$app/environment';
 
 const anthropic = new Anthropic({
-	apiKey: ANTHROPIC_API_KEY,
+	apiKey: building ? '' : env.ANTHROPIC_API_KEY,
 });
 
 const systemPrompt = getSystemPrompt();
