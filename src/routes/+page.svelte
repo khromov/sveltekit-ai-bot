@@ -1,18 +1,24 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import toast from 'svelte-french-toast';
 	import type { PageData } from './$types';
 	import type { Message } from './+page';
 
 	export let data: PageData;
-	export let form: { chatHistory: string } | null = null;
+	export let form: { chatHistory: string; error?: string } | null = null;
 
 	let messages: Message[] = data.messages;
 	let userInput = '';
+	let sending = false;
 
 	$: {
 		if (form?.chatHistory) {
 			messages = JSON.parse(form.chatHistory);
 			updateLocalStorage();
+		}
+		if (form?.error) {
+			toast.error(form.error);
 		}
 	}
 
@@ -33,7 +39,17 @@
 	{/each}
 </div>
 
-<form method="POST" use:enhance>
+<form
+	method="POST"
+	use:enhance={() => {
+		sending = true;
+		return ({ update }) => {
+			update({ invalidateAll: true }).finally(() => {
+				sending = false;
+			});
+		};
+	}}
+>
 	<input type="hidden" name="chat_history" value={JSON.stringify(messages)} />
 	<input
 		type="text"
@@ -41,8 +57,11 @@
 		bind:value={userInput}
 		placeholder="Type your message..."
 		required
+		disabled={sending}
 	/>
-	<button type="submit">Send</button>
+	<button type="submit" disabled={sending}>
+		{sending ? 'Sending...' : 'Send'}
+	</button>
 </form>
 
 <style>
@@ -90,5 +109,10 @@
 		color: white;
 		border: none;
 		cursor: pointer;
+	}
+
+	button:disabled {
+		background-color: #cccccc;
+		cursor: not-allowed;
 	}
 </style>

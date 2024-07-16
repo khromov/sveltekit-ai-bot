@@ -9,26 +9,33 @@ const anthropic = new Anthropic({
 
 export const actions: Actions = {
 	default: async ({ request }) => {
-		const data = await request.formData();
-		const userMessage = data.get('message') as string;
-		const chatHistory = JSON.parse(data.get('chat_history') as string || '[]');
+		try {
+			const data = await request.formData();
+			const userMessage = data.get('message') as string;
+			const chatHistory = JSON.parse(data.get('chat_history') as string || '[]');
 
-		chatHistory.push({ role: 'user', content: userMessage });
+			chatHistory.push({ role: 'user', content: userMessage });
 
-		const response = await anthropic.messages.create({
-			model: 'claude-3-5-sonnet-20240620',
-			max_tokens: 1024,
-			system: 'You are a professional programmer.',
-			messages: chatHistory,
-		});
+			const response = await anthropic.messages.create({
+				model: 'claude-3-5-sonnet-20240620',
+				max_tokens: 1024,
+				system: 'You are a professional programmer.',
+				messages: chatHistory,
+			});
 
-        const blocks = response.content as TextBlock[];
+			const blocks = response.content as TextBlock[];
 
-		const assistantMessage = { role: 'assistant', content: blocks[0].text || '' };
-		chatHistory.push(assistantMessage);
+			const assistantMessage = { role: 'assistant', content: blocks[0].text || '' };
+			chatHistory.push(assistantMessage);
 
-		return {
-			chatHistory: JSON.stringify(chatHistory),
-		};
+			return {
+				chatHistory: JSON.stringify(chatHistory),
+			};
+		} catch (error) {
+			console.error('Error in chat action:', error);
+			return {
+				error: 'An error occurred while processing your request. Please try again.',
+			};
+		}
 	},
 };
