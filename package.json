@@ -12,7 +12,8 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
-		"test:unit": "vitest"
+		"test:unit": "vitest",
+		"start": "node build/"
 	},
 	"devDependencies": {
 		"@anthropic-ai/sdk": "^0.24.3",
