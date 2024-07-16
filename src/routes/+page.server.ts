@@ -13,6 +13,7 @@ const systemPrompt = getSystemPrompt();
 
 export const actions: Actions = {
 	default: async ({ request }) => {
+        //return fail(503, {  error: 'debug', chatHistory: null, });
 		try {
 			const data = await request.formData();
 			const userMessage = data.get('message') as string;

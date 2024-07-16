@@ -16,10 +16,7 @@
 	let chatContainer: HTMLDivElement;
 	let inputElement: HTMLInputElement;
 
-	$: console.log('xx', form);
-
 	$: if (form?.chatHistory) {
-		// When form errors it returns null as chatHistory so we don't update the messages
 		messages = JSON.parse(form.chatHistory);
 		updateLocalStorage();
 		scrollToBottom();
@@ -42,9 +39,14 @@
 	}
     
 	onMount(() => {
-		focusInput(); // TODO: For some reason not working
+		focusInput();
 		scrollToBottom();
 	});
+
+	function handleClearChat() {
+		messages = [];
+		updateLocalStorage();
+	}
 </script>
 
 <h1>Chat with Claude</h1>
@@ -88,6 +90,7 @@
 	<button type="submit" disabled={sending}>
 		{sending ? 'Sending...' : 'Send'}
 	</button>
+	<button type="button" on:click={handleClearChat}>Clear Chat</button>
 </form>
 
 <style>
@@ -135,6 +138,7 @@
 		color: white;
 		border: none;
 		cursor: pointer;
+		margin-left: 10px;
 	}
 
 	button:disabled {
