@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+    import SvelteMarkdown from 'svelte-markdown'
 	import { invalidateAll } from '$app/navigation';
 	import { onMount, tick } from 'svelte';
 	import toast from 'svelte-french-toast';
@@ -51,7 +52,7 @@
 <div class="chat-container" bind:this={chatContainer}>
 	{#each messages as message}
 		<div class="message {message.role}">
-			<p>{message.content}</p>
+			<SvelteMarkdown source={message.content} />
 		</div>
 	{/each}
 </div>

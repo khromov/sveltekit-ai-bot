@@ -3,10 +3,13 @@ import Anthropic from '@anthropic-ai/sdk';
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import type { TextBlock } from '@anthropic-ai/sdk/resources/messages.mjs';
+import { getSystemPrompt } from '$lib/systemPrompt';
 
 const anthropic = new Anthropic({
 	apiKey: ANTHROPIC_API_KEY,
 });
+
+const systemPrompt = getSystemPrompt();
 
 export const actions: Actions = {
 	default: async ({ request }) => {
@@ -20,7 +23,7 @@ export const actions: Actions = {
 			const response = await anthropic.messages.create({
 				model: 'claude-3-5-sonnet-20240620',
 				max_tokens: 1024,
-				system: 'You are a professional programmer.',
+				system: systemPrompt,
 				messages: chatHistory,
 			});
 
