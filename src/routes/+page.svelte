@@ -49,100 +49,172 @@
 	}
 </script>
 
-<h1>Chat with Claude</h1>
+<main>
+	<h1>SvelteKit AI Assistant</h1>
+	
+	<p class="intro">
+		Welcome to the SvelteKit AI Assistant! This chatbot is powered by Claude, an AI trained on the latest SvelteKit documentation.
+		Ask questions about Svelte 4 and SvelteKit, and get expert answers and code examples.
+	</p>
 
-<div class="chat-container" bind:this={chatContainer}>
-	{#each messages as message}
-		<div class="message {message.role}">
-			<SvelteMarkdown source={message.content} />
+	<div class="chat-container" bind:this={chatContainer}>
+		{#if messages.length === 0}
+			<p class="empty-state">No messages yet. Start the conversation by asking a question about SvelteKit!</p>
+		{:else}
+			{#each messages as message}
+				<div class="message {message.role}">
+					<SvelteMarkdown source={message.content} />
+				</div>
+			{/each}
+		{/if}
+	</div>
+
+	<form
+		method="POST"
+		use:enhance={() => {
+			sending = true;
+			return ({ update, result }) => {
+				update({ invalidateAll: true }).finally(async () => {
+					sending = false;
+					if (result.type === 'failure') {
+						toast.error(result.data?.error || 'An error occurred');
+					} else {
+						userInput = '';
+						await scrollToBottom();
+					}
+					focusInput();
+				});
+			};
+		}}
+	>
+		<input type="hidden" name="chat_history" value={JSON.stringify(messages)} />
+		<div class="input-container">
+			<input
+				type="text"
+				name="message"
+				bind:value={userInput}
+				bind:this={inputElement}
+				placeholder="Ask about SvelteKit..."
+				required
+				disabled={sending}
+			/>
+			<button type="submit" disabled={sending} class="send-button">
+				{sending ? 'Sending...' : 'Send'}
+			</button>
 		</div>
-	{/each}
-</div>
+		<button type="button" on:click={handleClearChat} class="clear-button">Clear Chat</button>
+	</form>
 
-<form
-	method="POST"
-	use:enhance={() => {
-		sending = true;
-		return ({ update, result }) => {
-			update({ invalidateAll: true }).finally(async () => {
-				sending = false;
-				if (result.type === 'failure') {
-					toast.error(result.data?.error || 'An error occurred');
-				} else {
-					userInput = '';
-					await scrollToBottom();
-				}
-				focusInput();
-			});
-		};
-	}}
->
-	<input type="hidden" name="chat_history" value={JSON.stringify(messages)} />
-	<input
-		type="text"
-		name="message"
-		bind:value={userInput}
-		bind:this={inputElement}
-		placeholder="Type your message..."
-		required
-		disabled={sending}
-	/>
-	<button type="submit" disabled={sending}>
-		{sending ? 'Sending...' : 'Send'}
-	</button>
-	<button type="button" on:click={handleClearChat}>Clear Chat</button>
-</form>
+	<p class="instructions">
+		Tip: You can ask about SvelteKit features, best practices, or how to implement specific functionality.
+		The AI will provide code examples and explanations based on the latest documentation.
+	</p>
+</main>
 
 <style>
-	.chat-container {
+	main {
 		max-width: 800px;
-		margin: 20px auto;
+		margin: 0 auto;
 		padding: 20px;
-		border: 1px solid #ccc;
-		border-radius: 5px;
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+	}
+
+	h1 {
+		color: #333;
+		text-align: center;
+		margin-bottom: 20px;
+	}
+
+	.intro, .instructions {
+		color: #666;
+		line-height: 1.6;
+		margin-bottom: 20px;
+	}
+
+	.chat-container {
+		background-color: #f7f7f7;
+		border-radius: 12px;
+		padding: 20px;
 		height: 400px;
 		overflow-y: auto;
+		margin-bottom: 20px;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	}
+
+	.empty-state {
+		color: #999;
+		text-align: center;
+		margin-top: 180px;
 	}
 
 	.message {
-		margin-bottom: 10px;
-		padding: 10px;
-		border-radius: 5px;
+		margin-bottom: 15px;
+		padding: 12px;
+		border-radius: 18px;
+		max-width: 80%;
 	}
 
 	.user {
-		background-color: #e6f3ff;
-		text-align: right;
+		background-color: #007aff;
+		color: white;
+		align-self: flex-end;
+		margin-left: auto;
 	}
 
 	.assistant {
-		background-color: #f0f0f0;
+		background-color: #e5e5ea;
+		color: #333;
 	}
 
 	form {
-		max-width: 800px;
-		margin: 20px auto;
 		display: flex;
+		flex-direction: column;
+	}
+
+	.input-container {
+		display: flex;
+		margin-bottom: 10px;
 	}
 
 	input {
 		flex-grow: 1;
-		padding: 10px;
+		padding: 12px;
 		font-size: 16px;
+		border: 1px solid #ccc;
+		border-radius: 25px;
+		outline: none;
 	}
 
 	button {
-		padding: 10px 20px;
+		padding: 12px 20px;
 		font-size: 16px;
-		background-color: #4caf50;
 		color: white;
 		border: none;
 		cursor: pointer;
+		border-radius: 25px;
+		transition: background-color 0.3s ease;
+	}
+
+	.send-button {
+		background-color: #007aff;
 		margin-left: 10px;
 	}
 
-	button:disabled {
+	.send-button:hover {
+		background-color: #0056b3;
+	}
+
+	.send-button:disabled {
 		background-color: #cccccc;
 		cursor: not-allowed;
+	}
+
+	.clear-button {
+		background-color: #ff3b30;
+		align-self: center;
+	}
+
+	.clear-button:hover {
+		background-color: #d63029;
 	}
 </style>
