@@ -40,7 +40,7 @@ export const actions: Actions = {
 			console.error('Error in chat action:', error);
 			return fail(503, { 
 				error: `An error occurred while processing your request: ${error?.message}`,
-				chatHistory: null, // Can you create a Flappy Bird clone in SvelteKit with a high scores function?
+				chatHistory: null,
 			});
 		}
 	},
