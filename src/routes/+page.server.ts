@@ -1,5 +1,6 @@
 import { ANTHROPIC_API_KEY } from '$env/static/private';
 import Anthropic from '@anthropic-ai/sdk';
+import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import type { TextBlock } from '@anthropic-ai/sdk/resources/messages.mjs';
 
@@ -33,9 +34,10 @@ export const actions: Actions = {
 			};
 		} catch (error) {
 			console.error('Error in chat action:', error);
-			return {
+			return fail(503, { 
 				error: 'An error occurred while processing your request. Please try again.',
-			};
+				chatHistory: null,
+			});
 		}
 	},
 };

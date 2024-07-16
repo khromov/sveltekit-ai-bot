@@ -2,24 +2,22 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import toast from 'svelte-french-toast';
-	import type { PageData } from './$types';
+	import type { PageData, ActionData } from './$types';
 	import type { Message } from './+page';
 
 	export let data: PageData;
-	export let form: { chatHistory: string; error?: string } | null = null;
+	export let form: ActionData;
 
 	let messages: Message[] = data.messages;
 	let userInput = '';
 	let sending = false;
 
-	$: {
-		if (form?.chatHistory) {
-			messages = JSON.parse(form.chatHistory);
-			updateLocalStorage();
-		}
-		if (form?.error) {
-			toast.error(form.error);
-		}
+	$: console.log('xx', form);
+
+	$: if (form?.chatHistory) {
+		// When form errors it returns null as chatHistory so we don't update the messages
+		messages = JSON.parse(form.chatHistory);
+		updateLocalStorage();
 	}
 
 	function updateLocalStorage() {
@@ -43,9 +41,12 @@
 	method="POST"
 	use:enhance={() => {
 		sending = true;
-		return ({ update }) => {
+		return ({ update, result }) => {
 			update({ invalidateAll: true }).finally(() => {
 				sending = false;
+				if (result.type === 'failure') {
+					toast.error(result.data?.error || 'An error occurred');
+				}
 			});
 		};
 	}}
@@ -105,7 +106,7 @@
 	button {
 		padding: 10px 20px;
 		font-size: 16px;
-		background-color: #4CAF50;
+		background-color: #4caf50;
 		color: white;
 		border: none;
 		cursor: pointer;
