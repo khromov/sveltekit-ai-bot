@@ -22,7 +22,7 @@ export const actions: Actions = {
 			chatHistory.push({ role: 'user', content: userMessage });
 
 			const response = await anthropic.messages.create({
-				model: 'claude-3-5-sonnet-20240620',
+				model: 'claude-3-5-sonnet-20240620', // 'claude-3-haiku-20240307',
 				max_tokens: 4096,
 				system: systemPrompt,
 				messages: chatHistory,
