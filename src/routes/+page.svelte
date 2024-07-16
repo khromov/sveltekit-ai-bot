@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import { tick } from 'svelte';
 	import toast from 'svelte-french-toast';
 	import type { PageData, ActionData } from './$types';
 	import type { Message } from './+page';
@@ -11,6 +12,7 @@
 	let messages: Message[] = data.messages;
 	let userInput = '';
 	let sending = false;
+	let chatContainer: HTMLDivElement;
 
 	$: console.log('xx', form);
 
@@ -18,6 +20,7 @@
 		// When form errors it returns null as chatHistory so we don't update the messages
 		messages = JSON.parse(form.chatHistory);
 		updateLocalStorage();
+		scrollToBottom();
 	}
 
 	function updateLocalStorage() {
@@ -25,11 +28,16 @@
 			localStorage.setItem('chat_messages', JSON.stringify(messages));
 		}
 	}
+
+	async function scrollToBottom() {
+		await tick();
+		chatContainer.scrollTop = chatContainer.scrollHeight;
+	}
 </script>
 
 <h1>Chat with Claude</h1>
 
-<div class="chat-container">
+<div class="chat-container" bind:this={chatContainer}>
 	{#each messages as message}
 		<div class="message {message.role}">
 			<p>{message.content}</p>
@@ -46,6 +54,9 @@
 				sending = false;
 				if (result.type === 'failure') {
 					toast.error(result.data?.error || 'An error occurred');
+				} else {
+					userInput = '';
+					scrollToBottom();
 				}
 			});
 		};
