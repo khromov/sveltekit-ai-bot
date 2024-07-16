@@ -23,7 +23,7 @@ export const actions: Actions = {
 
 			const response = await anthropic.messages.create({
 				model: 'claude-3-5-sonnet-20240620',
-				max_tokens: 1024,
+				max_tokens: 4096,
 				system: systemPrompt,
 				messages: chatHistory,
 			});
@@ -39,8 +39,8 @@ export const actions: Actions = {
 		} catch (error) {
 			console.error('Error in chat action:', error);
 			return fail(503, { 
-				error: 'An error occurred while processing your request. Please try again.',
-				chatHistory: null,
+				error: `An error occurred while processing your request: ${error?.message}`,
+				chatHistory: null, // Can you create a Flappy Bird clone in SvelteKit with a high scores function?
 			});
 		}
 	},
