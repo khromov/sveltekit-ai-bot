@@ -3,24 +3,30 @@ import Anthropic from '@anthropic-ai/sdk';
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import type { TextBlock } from '@anthropic-ai/sdk/resources/messages.mjs';
-import { getSystemPrompt } from '$lib/systemPrompt';
+import { getSystemPromptWithDocs, getSystemPromptWithoutDocs } from '$lib/systemPrompt';
 import { building } from '$app/environment';
 
 const anthropic = new Anthropic({
 	apiKey: building ? '' : env.ANTHROPIC_API_KEY,
 });
 
-const systemPrompt = getSystemPrompt();
-
 export const actions: Actions = {
 	default: async ({ request }) => {
-        //return fail(503, {  error: 'debug', chatHistory: null, });
 		try {
 			const data = await request.formData();
 			const userMessage = data.get('message') as string;
 			const chatHistory = JSON.parse(data.get('chat_history') as string || '[]');
+			const includeDocs = data.get('include_docs') !== null;
 
 			chatHistory.push({ role: 'user', content: userMessage });
+
+			const systemPrompt = includeDocs ? getSystemPromptWithDocs() : getSystemPromptWithoutDocs();
+
+			if(includeDocs) {
+				console.log('Using system prompt with docs');
+			} else {
+				console.log('Using system prompt without docs');
+			}
 
 			const response = await anthropic.messages.create({
 				model: 'claude-3-5-sonnet-20240620', // 'claude-3-haiku-20240307',

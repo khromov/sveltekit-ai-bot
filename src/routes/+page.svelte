@@ -102,6 +102,12 @@
 				{sending ? 'Sending...' : 'Send'}
 			</button>
 		</div>
+		<div class="checkbox-container">
+			<label>
+				<input type="checkbox" name="include_docs" checked />
+				Include full SvelteKit documentation (adds ~80k tokens, increases cost by ~$0.2 USD/message)
+			</label>
+		</div>
 		<button type="button" on:click={handleClearChat} class="clear-button">Clear Chat</button>
 	</form>
 
@@ -176,7 +182,7 @@
 		margin-bottom: 10px;
 	}
 
-	input {
+	input[type="text"] {
 		flex-grow: 1;
 		padding: 12px;
 		font-size: 16px;
@@ -212,9 +218,25 @@
 	.clear-button {
 		background-color: #ff3b30;
 		align-self: center;
+		margin-top: 10px;
 	}
 
 	.clear-button:hover {
 		background-color: #d63029;
+	}
+
+	.checkbox-container {
+		margin-bottom: 10px;
+	}
+
+	.checkbox-container label {
+		display: flex;
+		align-items: center;
+		font-size: 14px;
+		color: #666;
+	}
+
+	.checkbox-container input[type="checkbox"] {
+		margin-right: 8px;
 	}
 </style>
