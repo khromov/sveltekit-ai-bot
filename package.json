@@ -14,7 +14,8 @@
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
 		"test:unit": "vitest",
-		"start": "node build/"
+		"start": "node build/",
+		"updatedocs": "curl -o src/lib/docs.json https://kit.svelte.dev/content.json"
 	},
 	"devDependencies": {
 		"@anthropic-ai/sdk": "^0.24.3",
