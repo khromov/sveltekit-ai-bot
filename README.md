@@ -25,3 +25,9 @@ Visit http://localhost:5173 to start chatting with the AI assistant.
 ## Usage
 
 Simply type your Svelte or SvelteKit related questions into the chat interface. The AI will provide answers, explanations, and code examples based on the latest documentation.
+
+## Wrap up codebase for upload to Claude Projects
+
+```
+npx ai-digest
+```
