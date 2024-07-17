@@ -1,4 +1,4 @@
-# sveltekit-ai-bot
+# SvelteKit AI Assistant
 
 A SvelteKit app that provides an AI-powered chatbot for answering questions about Svelte and SvelteKit. This bot uses the Anthropic Claude API to generate responses based on the latest Svelte and SvelteKit documentation.
 
