@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
     import SvelteMarkdown from 'svelte-markdown'
-	import { invalidateAll } from '$app/navigation';
 	import { onMount, tick } from 'svelte';
 	import toast from 'svelte-french-toast';
 	import type { PageData, ActionData } from './$types';
 	import type { Message } from './+page';
+	import Intro from '$lib/Intro.svelte';
+	import Outro from '$lib/Outro.svelte';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -50,13 +51,7 @@
 </script>
 
 <main>
-	<h1>SvelteKit AI Assistant</h1>
-	
-	<p class="intro">
-		Welcome to the SvelteKit AI Assistant! This chatbot is powered by Claude, an AI trained on the latest SvelteKit documentation.
-		Ask questions about Svelte 4 and SvelteKit, and get expert answers and code examples.
-	</p>
-
+	<Intro />
 	<div class="chat-container" bind:this={chatContainer}>
 		{#if messages.length === 0}
 			<p class="empty-state">No messages yet. Start the conversation by asking a question about SvelteKit!</p>
@@ -104,17 +99,13 @@
 		</div>
 		<div class="checkbox-container">
 			<label>
-				<input type="checkbox" name="include_docs" checked />
+				<input type="checkbox" name="include_docs" />
 				Include full SvelteKit documentation (adds ~80k tokens, increases cost by ~$0.2 USD/message)
 			</label>
 		</div>
 		<button type="button" on:click={handleClearChat} class="clear-button">Clear Chat</button>
 	</form>
-
-	<p class="instructions">
-		Tip: You can ask about SvelteKit features, best practices, or how to implement specific functionality.
-		The AI will provide code examples and explanations based on the latest documentation.
-	</p>
+	<Outro/>
 </main>
 
 <style>
@@ -123,18 +114,6 @@
 		margin: 0 auto;
 		padding: 20px;
 		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-	}
-
-	h1 {
-		color: #333;
-		text-align: center;
-		margin-bottom: 20px;
-	}
-
-	.intro, .instructions {
-		color: #666;
-		line-height: 1.6;
-		margin-bottom: 20px;
 	}
 
 	.chat-container {
