@@ -12,6 +12,7 @@
 	export let form: ActionData;
 
 	let messages: Message[] = data.messages;
+	let includeDocs = data.includeDocs;
 	let userInput = '';
 	let sending = false;
 	let chatContainer: HTMLDivElement;
@@ -26,6 +27,7 @@
 	function updateLocalStorage() {
 		if (typeof localStorage !== 'undefined') {
 			localStorage.setItem('chat_messages', JSON.stringify(messages));
+			localStorage.setItem('includeDocs', JSON.stringify(includeDocs));
 		}
 	}
 
@@ -46,6 +48,11 @@
 
 	function handleClearChat() {
 		messages = [];
+		updateLocalStorage();
+	}
+
+	function handleIncludeDocsChange() {
+		includeDocs = !includeDocs;
 		updateLocalStorage();
 	}
 </script>
@@ -99,7 +106,7 @@
 		</div>
 		<div class="checkbox-container">
 			<label>
-				<input type="checkbox" name="include_docs" />
+				<input type="checkbox" name="include_docs" checked={includeDocs} on:change={handleIncludeDocsChange} />
 				Include full SvelteKit documentation (adds ~80k tokens, increases cost by ~$0.2 USD/message)
 			</label>
 		</div>

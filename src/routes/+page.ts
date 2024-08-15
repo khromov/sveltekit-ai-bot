@@ -8,15 +8,19 @@ export type Message = {
 
 export const load: PageLoad = async () => {
 	let messages: Message[] = [];
+	let includeDocs: boolean = true;
 	
 	if (browser) {
 		const storedMessages = localStorage.getItem('chat_messages');
+		const storedIncludeDocs = localStorage.getItem('includeDocs');
 		if (storedMessages) {
 			messages = JSON.parse(storedMessages);
+			includeDocs = storedIncludeDocs === 'true';
 		}
 	}
 
 	return {
 		messages,
+		includeDocs: includeDocs
 	};
 };

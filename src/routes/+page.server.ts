@@ -28,10 +28,18 @@ export const actions: Actions = {
 				console.log('Using system prompt without docs');
 			}
 
-			const response = await anthropic.messages.create({
+			const response = await anthropic.beta.promptCaching.messages.create({
 				model: 'claude-3-5-sonnet-20240620', // 'claude-3-haiku-20240307',
 				max_tokens: 4096,
-				system: systemPrompt,
+				system: [
+					{
+						type: 'text',
+						text: systemPrompt,
+						cache_control: includeDocs ? {
+							type: 'ephemeral'
+						} : undefined
+					}
+				],
 				messages: chatHistory,
 			});
 
