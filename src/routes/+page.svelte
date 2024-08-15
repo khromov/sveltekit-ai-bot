@@ -76,7 +76,7 @@
 		use:enhance={() => {
 			sending = true;
 			return ({ update, result }) => {
-				update({ invalidateAll: true }).finally(async () => {
+				update({ invalidateAll: true, reset: false }).finally(async () => {
 					sending = false;
 					if (result.type === 'failure') {
 						toast.error(result.data?.error || 'An error occurred');
