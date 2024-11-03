@@ -15,7 +15,7 @@
 		"test:integration": "playwright test",
 		"test:unit": "vitest",
 		"start": "node build/",
-		"updatedocs": "curl -o src/lib/docs.json https://kit.svelte.dev/content.json"
+		"updatedocs": "curl -o src/lib/docs.json https://svelte.dev/content.json"
 	},
 	"devDependencies": {
 		"@anthropic-ai/sdk": "^0.26",
