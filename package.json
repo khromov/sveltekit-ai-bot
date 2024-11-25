@@ -21,7 +21,7 @@
 		"@anthropic-ai/sdk": "^0.26",
 		"@playwright/test": "^1.46.0",
 		"@sveltejs/adapter-node": "^5.2.2",
-		"@sveltejs/kit": "^2.5.22",
+		"@sveltejs/kit": "^2.8.3",
 		"@sveltejs/vite-plugin-svelte": "^3.1.1",
 		"@types/eslint": "^9.6.0",
 		"eslint": "^9.9.0",
